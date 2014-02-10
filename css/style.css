@@ -1,0 +1,102 @@
+body {
+  font: 16px/1.231 sans-serif;
+  text-align: center;
+  margin-top: 12pt;
+  padding-top: 20px;
+}
+
+canvas { 
+  display: inline-block;
+  background: #202020;
+}
+
+#record {
+  display: block;
+}
+
+#record.recording {
+  background-color: rgba(255, 0, 0, 0.1);
+  /*-webkit-radial-gradient(center, ellipse cover, #ff0000 0%,white 75%,white 100%,#7db9e8 100%)
+  background: red;
+  background: -webkit-radial-gradient(center, ellipse cover, #ff0000 0%, white 75%, white 100%,#7db9e8 100%); 
+  */
+}
+
+#dock {
+  width: 100%;
+  display: -webkit-box;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+}
+
+#dock span {
+  font-size: 1.3em;
+  letter-spacing: 5px;
+}
+
+#script {
+  display: inline-block;
+  width: 636px;
+  margin: 5px 50px 5px 50px;
+  color: rgb(60, 116, 49);
+}
+
+.navigate.next { right: 0px; }
+
+audio {
+  width: 800px;
+}
+
+#be-prepared {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  padding-top: 20%;
+  /*padding-left: 5%;
+  padding-right: 5%;*/
+  background-color: rgba(0, 0, 0, 0.20);
+
+  display: none;
+}
+
+#be-prepared .msg {
+  font-size: 3.5em;
+  width: 100%;
+  line-height: 200px;
+  color: rgb(213, 44, 44);
+  background-color: rgba(0, 0, 0, 0.60);
+}
+
+#be-prepared div {
+  display: inline-block;
+}
+
+div.helper-text {
+  font-size: 1.1em;
+  color: gray;
+}
+
+#usage {
+  position: absolute;
+  left: 20px;
+  width: 220px;
+}
+
+#usage table {
+  border: 1px solid rgb(206, 206, 206);;
+  border-radius: 2px;
+}
+
+#usage th {
+  text-align: center;
+}
+
+#files-uploader {
+  display: inline-block;
+}
+
+#aborted {
+  display: none; 
+}

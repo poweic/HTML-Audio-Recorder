@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<body>
+  <head>
+    <style>
+      form {
+	width: 40%;
+	margin: 6em auto;
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+      }
+      form .btn {
+	width: 100%;
+	margin: 0.1em;
+      }
+    </style>
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+
+  </head>
+  <body>
+
+    <form action="/login" id='login' method="post">
+      <fieldset>
+	<legend>語音實驗室語料收集平台</legend>
+	<div>
+	  <div class="form-group">
+	    <input type="text" class="form-control" name="username" placeholder="帳號">
+	  </div>
+	  <div class="form-group">
+	    <input type="password" class="form-control" name="password" placeholder="密碼">
+	  </div>
+	  <button class="btn btn-primary btn-large">登入</button><br/>
+	  <a href='/signup' class="btn btn-success btn-large">註冊</a><br/>
+	</div>
+      </fieldset>
+    </form>
+
+  </body>
+</html>
+
