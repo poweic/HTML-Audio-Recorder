@@ -4,16 +4,43 @@
     <script src="js/jquery-1.10.1.js"></script>
     <script>
       $(function () {
-	$('#signup').submit(function () {
-	  var username = $(this).find('input[name=username]').val();
-	  var password = $(this).find('input[name=password]').val();
 
-	  if (username == "" || password == "") {
+	var $username = $(this).find('input[name=username]');
+	var $password = $(this).find('input[name=password]');
+	var $pwdAgain = $(this).find('input[name=passwordAgain]');
+
+	$('#signup').submit(function () {
+
+	  if ($username.val() == "" || $password.val() == "") {
 	    alert('username or password is empty');
 	    return false;
 	  }
+
+	  if (isTypo())
+	    return false;
+
 	});
+
+	$('input[name=passwordAgain]').on('blur', function () {
+
+	  if (isTypo()) {
+	    $(this).addClass('typo');
+	    $('#typo-msg').show();
+	  }
+
+	}).on('focus', function () {
+
+	  $(this).removeClass('typo');
+	  $('#typo-msg').hide();
+
+	});
+
+	function isTypo() {
+	  return $password.val() != $pwdAgain.val();
+	}
+
       });
+
     </script>
     <style>
       form {
@@ -26,6 +53,19 @@
       form .btn {
 	width: 100%;
 	margin: 0.1em;
+      }
+
+      fieldset {
+	width: 240px!important;
+      }
+
+      .typo {
+	border-color: red;
+	background-color: yellow;
+      }
+
+      #typo-msg {
+	display: none;
       }
 
       .help-text {
@@ -47,12 +87,18 @@
 	  </div>
 
 	  <div class="form-group">
+	    <input type="text" class="form-control" name="fullname" placeholder="姓名">
+	  </div>
+
+	  <div class="form-group">
 	    <input type="password" class="form-control" name="password" placeholder="密碼">
 	  </div>
 
 	  <div class="form-group">
-	    <input type="password" class="form-control" name="student-id" placeholder="學號">
+	    <input type="password" class="form-control" name="passwordAgain" placeholder="再輸入一次密碼">
 	  </div>
+
+	  <div class='help-text' id='typo-msg'>您第二次輸入的密碼與第一次不相符，請重新輸入。</div>
 
 	  <div class="checkbox">
 	    <label>
