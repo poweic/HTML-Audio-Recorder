@@ -6,6 +6,11 @@ $(function () {
   window.addEventListener('load', initAudio );
   document.addEventListener('keydown', handleBodyKeyDown, false);
 
+  if (window.innerWidth < 1320) {
+    // TODO
+    // $('div#usage').hide();
+  }
+
   /*$.ajax({
     url: 'http://140.112.21.18:3000/more',
     type: 'GET',
@@ -28,7 +33,7 @@ var canvasWidth, canvasHeight;
 var recIndex = 0;
 var samplingRate;
 
-const SERVER_IP = 'http://140.112.21.18:8123';
+const SERVER_IP = 'http://140.112.21.18:3000/wav';
 
 function toBase64(blob, callback) { 
   var fileReader = new FileReader();
@@ -37,6 +42,11 @@ function toBase64(blob, callback) {
     callback(base64data);
   }
   fileReader.readAsDataURL(blob);
+}
+
+function getCookie (key) {
+  var regexp = new RegExp("(?:(?:^|.*;\\s*)" + key + "\\s*\\=\\s*([^;]*).*$)|^.*$", "");
+  return document.cookie.replace(regexp, "$1");
 }
 
 function plotWaveAndSend() {
@@ -51,18 +61,24 @@ function plotWaveAndSend() {
 
     var date = new Date();
     var y = date.getFullYear(),
-	m = date.getMonth() + 1,
-	d = date.getDay() + 1;
+	mm= date.getMonth() + 1,
+	d = date.getDay() + 1,
+	h = date.getHours(),
+	m = date.getMinutes(),
+	s = date.getSeconds();
 
+    var uid = paddy(parseInt($("#current").text()), 6);
 
-    var current = parseInt($("#current").text());
-    var uid = y.toString() 
-	    + paddy(m, 2)
-	    + paddy(d, 2)
-	    + '-' + paddy(current, 6);
+    var timestamp = y.toString() + paddy(mm, 2) + paddy(d, 2) + '-'
+		    + paddy(h, 2) + paddy(m, 2) + paddy(s, 2);
+    
+    send({
+      uid: uid,
+      timestamp: timestamp,
+      userid: getCookie('userid'),
+      data: data
+    });
 
-    data = "uid:" + uid + ";sid:r01942135;" + data;
-    send(data);
     window.base64data = data;
   }
 }
@@ -82,7 +98,7 @@ function encodeWav(callback) {
 function send(data) {
   $.ajax({
     url: SERVER_IP,
-    data: {data: data},
+    data: data,
     type: 'POST',
     success: function(err) { console.log(err); },
     error: function (err) {
@@ -302,6 +318,7 @@ function gotStream(stream) {
   inputPoint.connect( analyserNode );
 
   // Default: 16-bit, 44100 Hz  => 1411 kbps
+  console.log('Sample Rate: ' + inputPoint.context.sampleRate);
   audioRecorder = new Recorder( inputPoint );
 
   zeroGain = audioContext.createGainNode();
@@ -316,7 +333,7 @@ function initAudio() {
     return(alert("Error: getUserMedia not supported!"));
 
   navigator.webkitGetUserMedia({audio:true}, gotStream, function(e) {
-    alert('Error getting audio');
+    // alert('Error getting audio');
     console.log(e);
   });
 }

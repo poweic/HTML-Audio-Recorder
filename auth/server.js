@@ -1,29 +1,27 @@
-var passport = require('passport'),
+var fs = require('fs'),
+    express = require('express'),
+    app = express(),
+    bcrypt = require('bcrypt');
+    passport = require('passport'),
+    sprintf = require('../js/sprintf.min.js').sprintf,
     LocalStrategy = require('passport-local').Strategy;
 
-var fs = require('fs');
-
-var express = require('express');
-var app = express();
-
-var bcrypt = require('bcrypt');
-
-function getHashAndSalt(passwd, callback) {
-  bcrypt.genSalt(10, onSalted);
-
-  function onSalted(err, salt) {
-    bcrypt.hash(passwd, salt, function(err, hash) {
-      if (err) throw err;
-      callback(hash, salt);
-    });
-  }
-}
+const DATA_DIR = "/share/Collected_Data/";
 
 var mongoose = require('mongoose');
 mongoose.connect("mongodb://localhost/mydb");
+// 0) If this server.js failed to launch, first check whether mongod is running.
+//    Second, unlock mongodb by "rm /var/lib/mongodb/mongod.lock"
+// 1) To delete the whole data, type "mongo" in bash, and
+// > use mydb
+// > db.dropDatabase()
+// 2) To list all users in the database, type "mongo" in bash, and
+// > use mydb
+// > db.userauths.find()
 
 var localUserSchema = new mongoose.Schema({
   username: String,
+  fullname: String,
   salt: String,
   hash: String
 });
@@ -38,8 +36,8 @@ var Users = mongoose.model('userauths', localUserSchema);
 
   app.use(express.cookieParser());
   // app.use(express.bodyParser());
-  app.use(express.json());
-  app.use(express.urlencoded());
+  app.use(express.json({limit: '50mb'}));
+  app.use(express.urlencoded({limit: '50mb'}));
   app.use(express.session({ secret: 'secret key of my audio-recorder-server' }));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -107,6 +105,48 @@ app.get('/more', function (req, res) {
 
 });
 
+// ========== Wave ==========
+app.post('/wav', function (req, res) {
+
+  var base64data = req.body.data.replace(/^.*;base64,/g, "");
+  var utterance_id = req.body.uid;
+  var timestamp = req.body.timestamp;
+
+  Users.findById(req.body.userid, function(err, user) {
+    var username = user.username;
+    console.log('username: ' + username);
+    console.log('utterance_id: ' + utterance_id);
+
+    var folder = DATA_DIR + username + "/wav/";
+    exec("mkdir -p " + folder);
+
+    var filename = sprintf('%s-%s.wav', utterance_id, timestamp);
+    // var filename = utterance_id + '.wav';
+    save_wave(folder + filename, base64data);
+  });
+});
+
+var exec = function (cmd, callback) {
+  console.log('Executing shell command : "%s"...', cmd);
+  require('child_process').exec(cmd, callback);
+}
+
+function save_wave(filename, base64data) {
+  fwrite64(filename, base64data);
+}
+
+function fwrite64(filename, base64data) {
+  fs.writeFile(filename, base64data, 'base64', function(err) {
+    if (err) throw err;
+    console.log("The file was saved as \"" + filename + "\"!");
+  }); 
+}
+
+app.get('/wav', function (req, res) {
+  // TODO
+  // show all wave files in some GUI form
+});
+
 // ========== Login ========== 
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/',
@@ -138,6 +178,7 @@ app.get('/logout', function (req, res) {
 // ========== Sign Up ========== 
 app.post('/signup', function (req, res) {
   var username = req.body.username,
+      fullname = req.body.fullname,
       password = req.body.password;
 
   Users.findOne({username : username}, function(err,user) {
@@ -154,6 +195,7 @@ app.post('/signup', function (req, res) {
   function onHashed(hash, salt) {
     var user = new Users({
       username: username,
+      fullname: fullname,
       salt: salt,
       hash: hash
     });
@@ -162,6 +204,17 @@ app.post('/signup', function (req, res) {
     console.log('salt: "' + salt + '"');
 
     user.save(onUserAdded);
+  }
+
+  function getHashAndSalt(passwd, callback) {
+    bcrypt.genSalt(10, onSalted);
+
+    function onSalted(err, salt) {
+      bcrypt.hash(passwd, salt, function(err, hash) {
+	if (err) throw err;
+	callback(hash, salt);
+      });
+    }
   }
 
   function onUserAdded(err, that) {
