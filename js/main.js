@@ -74,6 +74,7 @@ function plotWaveAndSend() {
     
     send({
       uid: uid,
+      cid: window.corpus_fn,
       timestamp: timestamp,
       userid: getCookie('userid'),
       data: data
@@ -399,6 +400,9 @@ function handleFileSelect(evt) {
 
 function doneLoadingCorpus(corpus) {
   console.log(corpus);
+  // FIXME 
+  var filename = corpus[0].filename;
+  window.corpus_fn = filename.replace(/\..*$/, '');
 
   var sentences = [];
 

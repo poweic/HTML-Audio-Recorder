@@ -92,7 +92,7 @@ app.get('/', function (req, res) {
     return res.redirect('/login');
 
   req.method = 'get';
-  res.cookie('userid', req.user.id, { maxAge: 86400 * 7});
+  res.cookie('userid', req.user.id, { maxAge: 1000 * 86400 * 7 /* milliseconds */});
   res.render('../view/index.html');
 });
 
@@ -110,6 +110,7 @@ app.post('/wav', function (req, res) {
 
   var base64data = req.body.data.replace(/^.*;base64,/g, "");
   var utterance_id = req.body.uid;
+  var corpus_id = req.body.cid;
   var timestamp = req.body.timestamp;
 
   Users.findById(req.body.userid, function(err, user) {
@@ -120,8 +121,7 @@ app.post('/wav', function (req, res) {
     var folder = DATA_DIR + username + "/wav/";
     exec("mkdir -p " + folder);
 
-    var filename = sprintf('%s-%s.wav', utterance_id, timestamp);
-    // var filename = utterance_id + '.wav';
+    var filename = sprintf('%s-%s-%s.wav', corpus_id, utterance_id, timestamp);
     save_wave(folder + filename, base64data);
   });
 });
