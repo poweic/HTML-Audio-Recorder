@@ -5,6 +5,22 @@ body {
   padding-top: 20px;
 }
 
+#server_status {
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  margin: auto;
+  background-color: rgb(255, 86, 86);
+}
+
+td {
+  vertical-align: middle!important;
+}
+
+.online {
+  background-color: green!important;
+}
+
 canvas { 
   display: inline-block;
   background: #202020;

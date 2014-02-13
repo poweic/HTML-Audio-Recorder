@@ -1,3 +1,4 @@
+const SERVER_IP = 'http://140.112.21.18:3000';
 
 $(function () {
   $('#files-uploader').on('change', handleFileSelect);
@@ -11,19 +12,22 @@ $(function () {
     // $('div#usage').hide();
   }
 
-  /*$.ajax({
-    url: 'http://140.112.21.18:3000/more',
-    type: 'GET',
-    success: function(data) {
-      doneLoadingCorpus([{filename: 'example_04.txt', content: data}]); 
-    },
-    error: function (err) {
-      console.log(err);
-      console.log("Please check whether the server is running...");
-    }
-  });*/
+  updateServerStatus();
+  setInterval(updateServerStatus, 1000);
 });
 
+function updateServerStatus() {
+  $.ajax({
+    url: SERVER_IP + '/status',
+    type: 'GET',
+    success: function(data) {
+      $('#server_status').addClass('online');
+    },
+    error: function (err) {
+      $('#server_status').removeClass('online');
+    }
+  });
+}
 
 var audioContext = new webkitAudioContext();
 var audioInput = null, realAudioInput = null, inputPoint = null, audioRecorder = null;
@@ -32,8 +36,6 @@ var context = null;
 var canvasWidth, canvasHeight;
 var recIndex = 0;
 var samplingRate;
-
-const SERVER_IP = 'http://140.112.21.18:3000/wav';
 
 function toBase64(blob, callback) { 
   var fileReader = new FileReader();
@@ -59,6 +61,12 @@ function plotWaveAndSend() {
     $("#playontime").attr('src', data);
     $("#playontime").get(0).play();
 
+    sendWaveToServer(data);
+    window.base64data = data;
+  }
+
+  function sendWaveToServer(data) {
+
     var date = new Date();
     var y = date.getFullYear(),
 	mm= date.getMonth() + 1,
@@ -80,7 +88,6 @@ function plotWaveAndSend() {
       data: data
     });
 
-    window.base64data = data;
   }
 }
 
@@ -98,7 +105,7 @@ function encodeWav(callback) {
 
 function send(data) {
   $.ajax({
-    url: SERVER_IP,
+    url: SERVER_IP + "/wav",
     data: data,
     type: 'POST',
     success: function(err) { console.log(err); },

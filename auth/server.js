@@ -105,6 +105,13 @@ app.get('/more', function (req, res) {
 
 });
 
+function getUserNameById(userid, callback) {
+  Users.findById(userid, function (err, user) {
+    if (err) throw err;
+    callback(user.username);
+  });
+}
+
 // ========== Wave ==========
 app.post('/wav', function (req, res) {
 
@@ -113,17 +120,27 @@ app.post('/wav', function (req, res) {
   var corpus_id = req.body.cid;
   var timestamp = req.body.timestamp;
 
-  Users.findById(req.body.userid, function(err, user) {
-    var username = user.username;
+  getUserNameById(req.body.userid, onFound);
+
+  function onFound(username) {
     console.log('username: ' + username);
     console.log('utterance_id: ' + utterance_id);
 
     var folder = DATA_DIR + username + "/wav/";
-    exec("mkdir -p " + folder);
-
     var filename = sprintf('%s-%s-%s.wav', corpus_id, utterance_id, timestamp);
-    save_wave(folder + filename, base64data);
-  });
+    exec("mkdir -p " + folder, save_wave(folder + filename, base64data, done));
+  }
+
+  function save_wave(filename, data, callback) {
+    return function () {
+      fwrite64(filename, data, callback);
+    };
+  }
+
+  function done() {
+    res.end();
+  }
+
 });
 
 var exec = function (cmd, callback) {
@@ -131,20 +148,33 @@ var exec = function (cmd, callback) {
   require('child_process').exec(cmd, callback);
 }
 
-function save_wave(filename, base64data) {
-  fwrite64(filename, base64data);
-}
-
-function fwrite64(filename, base64data) {
+function fwrite64(filename, base64data, callback) {
   fs.writeFile(filename, base64data, 'base64', function(err) {
     if (err) throw err;
     console.log("The file was saved as \"" + filename + "\"!");
+    callback();
   }); 
 }
 
-app.get('/wav', function (req, res) {
+app.get('/wav/:username', function (req, res) {
   // TODO
+  var username = req.params.username;
+  var folder = DATA_DIR + username + "/wav/";
+
+  // var tmp_fn = "`ls " + folder + " | md5sum | cut -f 1 -d ' '`" + ".tar.gz";
+  // var tmp_fn = new Date().getTime() + ".tar.gz";
+  // var cmd = sprintf("tar zcvf %s %s/*", folder + tmp_fn, folder);
+  var cmd = "ls " + folder + "/* | sed 's%^%wget %g' | sed 's%" + DATA_DIR + "%http://140.112.21.18/recorded_waves/%g' | sed 's%$%<br/>%g'";
+  exec(cmd, function (err, data) {
+    res.send(data);
+    // res.send("abc\n123");
+  });
   // show all wave files in some GUI form
+});
+
+app.get('/status', function (req, res) {
+  // TODO
+  res.send('good');
 });
 
 // ========== Login ========== 
@@ -180,6 +210,8 @@ app.post('/signup', function (req, res) {
   var username = req.body.username,
       fullname = req.body.fullname,
       password = req.body.password;
+
+  console.log("fullname: " + fullname);
 
   Users.findOne({username : username}, function(err,user) {
     if (err)
