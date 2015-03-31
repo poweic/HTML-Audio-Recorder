@@ -3,66 +3,69 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF8">
     <title>Audio Recorder</title>
-    <script src="js/jquery-1.10.1.js"></script>
-    <script src="js/recorder.js"></script>
+
     <script src="js/sprintf.min.js"></script>
-    <script src="js/main.js"></script>
-    <link type="text/css" rel="stylesheet" href="css/style.css">
+
+    <script src="js/jquery-1.10.1.js"></script>
     <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
 
-    <script>
-      $(function () {
+    <script src="js/recorder.js"></script>
 
-	$('#files-uploader').on('change', handleFileSelect);
-	$('#upload-btn').click(function () {
-	  $('#files-uploader')[0].click();
-	});
-
-      });
-    </script>
-
+    <script src="js/app.js"></script>
+    <link type="text/css" rel="stylesheet" href="css/app.css">
   </head>
 
   <body>
-    <div id='usage'>
-      <table class='table'>
-	<thead>
-	  <tr><th>Keyboard</th><th>Function</th></tr>
-	</thead>
-	<tbody>
-	  <tr><td>Enter, Space</td><td>Toggle</td></tr>
-	  <tr><td>    R/r     </td><td>Record Again</td></tr>
-	  <tr><td>&rArr;      </td><td>Next Sentence</td></tr>
-	  <tr><td>&lArr;      </td><td>Prev Sentence</td></tr>
-	  <tr><td>Server Status</td><td><div id='server_status'></div></td></tr>
-	</tbody>
-      </table>
-      <span id='upload-btn' class="btn btn-primary btn-large">選擇檔案</span>
-      <span><a href='/logout' class="btn btn-default">Log Out</a></span>
-    </div>
+    <div class="container-fluid">
 
-    <div>
-      <canvas id="analyser" width="800" height="200"></canvas><br/>
-      <canvas id="wavedisplay" width="800" height="200"></canvas>
-    </div>
-
-    <audio id="playontime" controls></audio>
-    <div id='dock'>
-      <div class='prev'><img src="images/previous.png"/></div>
-
-      <span id='script'>『請對著麥克風進行音量測試』</span><br>
-
-      <span id='current'>1</span><span> / </span><span id='total'>1</span>
-
-      <div id="record" class="btn btn-default">
-	<img width="64" height="64" src="images/mic.png">
-	<div class="helper-text">Enter</div>
+      <div class='col-md-3 col-sm-4 col-xs-6' id='panel'>
+	<div class='row'>
+	  <table class='table'>
+	    <thead>
+	      <tr><th>Keyboard</th><th>Function</th></tr>
+	    </thead>
+	    <tbody>
+	      <tr><td>Enter, Space</td><td>Toggle</td></tr>
+	      <tr><td>    R/r     </td><td>Record Again</td></tr>
+	      <tr><td>&rArr;      </td><td>Next Sentence</td></tr>
+	      <tr><td>&lArr;      </td><td>Prev Sentence</td></tr>
+	      <tr><td>Server Status</td><td><div id='server_status'></div></td></tr>
+	    </tbody>
+	  </table>
+	</div>
+	<div class='row'>
+	  <span id='upload-btn' class="btn btn-primary btn-large">選擇檔案</span>
+	  <span><a href='/logout' class="btn btn-default">Log Out</a></span>
+	</div>
       </div>
-      <div class='next'><img src="images/next.png"/></div>
-    </div>
 
-    <input type="file" style='display: none' id="files-uploader" name="files[]" multiple />
-    <output id="list"></output>
+      <div class='col-md-6 col-sm-8'>
+	<div>
+	  <canvas id="analyser" width="800" height="200"></canvas><br/>
+	  <canvas id="wavedisplay" width="800" height="200"></canvas>
+	</div>
+
+	<audio id="playontime" controls></audio>
+	<div id='dock'>
+	  <div class='prev'><img src="images/previous.png"/></div>
+
+	  <span id='script'>『請對著麥克風進行音量測試』</span><br>
+
+	  <span id='current'>1</span><span> / </span><span id='total'>1</span>
+
+	  <div id="record" class="btn btn-default">
+	    <img width="64" height="64" src="images/mic.png">
+	    <div class="helper-text">Enter</div>
+	  </div>
+
+	  <div class='next'><img src="images/next.png"/></div>
+	</div>
+
+	<input type="file" style='display: none' id="files-uploader" name="files[]" multiple />
+	<output id="list"></output>
+
+      </div>
+    </div>
 
     <div id='be-prepared'>
       <div class='msg'>

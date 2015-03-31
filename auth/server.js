@@ -265,6 +265,8 @@ app.get('/upload', function (req, res) {
 });
 
 // ========== Basic Auth ========== 
-app.get('/basicAuth', express.basicAuth('kevin', '12345678'));
+app.get('/basicAuth', express.basicAuth('kevin', '12345678'), function (req, res) {
+  res.end("Authorized!!");
+});
 
-app.listen(3000);
+app.listen(3001);

@@ -15,6 +15,7 @@ body {
 
 td {
   vertical-align: middle!important;
+  white-space:nowrap;
 }
 
 .online {
@@ -32,10 +33,6 @@ canvas {
 
 #record.recording {
   background-color: rgba(255, 0, 0, 0.1);
-  /*-webkit-radial-gradient(center, ellipse cover, #ff0000 0%,white 75%,white 100%,#7db9e8 100%)
-  background: red;
-  background: -webkit-radial-gradient(center, ellipse cover, #ff0000 0%, white 75%, white 100%,#7db9e8 100%); 
-  */
 }
 
 #dock {
@@ -52,8 +49,8 @@ canvas {
 
 #script {
   display: inline-block;
-  width: 636px;
   margin: 5px 50px 5px 50px;
+  width: 600px;
   color: rgb(60, 116, 49);
 }
 
@@ -70,8 +67,6 @@ audio {
   top: 0px;
   bottom: 0px;
   padding-top: 20%;
-  /*padding-left: 5%;
-  padding-right: 5%;*/
   background-color: rgba(0, 0, 0, 0.20);
 
   display: none;
@@ -94,19 +89,20 @@ div.helper-text {
   color: gray;
 }
 
-#usage {
-  position: absolute;
-  left: 20px;
-  width: 220px;
-}
-
-#usage table {
+#panel table {
   border: 1px solid rgb(206, 206, 206);;
   border-radius: 2px;
+  margin: auto;
+  margin-bottom: 1em;
+  width: 80%;
 }
 
-#usage th {
+#panel th {
   text-align: center;
+}
+
+#panel {
+  margin-bottom: 2em;
 }
 
 #files-uploader {

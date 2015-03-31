@@ -1,24 +1,22 @@
-const SERVER_IP = 'http://140.112.21.18:3000';
-
 $(function () {
+
   $('#files-uploader').on('change', handleFileSelect);
+
+  $('#upload-btn').click(function () {
+    $('#files-uploader')[0].click();
+  });
+
   $('#record').on('click', toggleRecording);
 
   window.addEventListener('load', initAudio );
   document.addEventListener('keydown', handleBodyKeyDown, false);
 
-  if (window.innerWidth < 1320) {
-    // TODO
-    // $('div#usage').hide();
-  }
-
-  updateServerStatus();
-  setInterval(updateServerStatus, 1000);
+  setInterval(watchServerStatus, 500);
 });
 
-function updateServerStatus() {
+function watchServerStatus() {
   $.ajax({
-    url: SERVER_IP + '/status',
+    url: '/status',
     type: 'GET',
     success: function(data) {
       $('#server_status').addClass('online');
@@ -105,7 +103,7 @@ function encodeWav(callback) {
 
 function send(data) {
   $.ajax({
-    url: SERVER_IP + "/wav",
+    url: "/wav",
     data: data,
     type: 'POST',
     success: function(err) { console.log(err); },
@@ -294,7 +292,7 @@ function updateAnalysers(time) {
     }
   }
 
-  rafID = window.webkitRequestAnimationFrame( updateAnalysers );
+  rafID = window.requestAnimationFrame(updateAnalysers);
 }
 
 function toggleMono() {
@@ -311,7 +309,7 @@ function toggleMono() {
 }
 
 function gotStream(stream) {
-  inputPoint = audioContext.createGainNode();
+  inputPoint = audioContext.createGain();
   samplingRate = inputPoint.context.sampleRate;
 
   // Create an AudioNode from the stream.
@@ -329,7 +327,7 @@ function gotStream(stream) {
   console.log('Sample Rate: ' + inputPoint.context.sampleRate);
   audioRecorder = new Recorder( inputPoint );
 
-  zeroGain = audioContext.createGainNode();
+  zeroGain = audioContext.createGain();
   zeroGain.gain.value = 0.0;
   inputPoint.connect( zeroGain );
   zeroGain.connect( audioContext.destination );
